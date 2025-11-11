@@ -1,6 +1,9 @@
-#include <iostream>
+#include "base/Scheduler.h"
+
+constexpr int MAX_MEMORY = 2048;
+constexpr int MAX_QUANTUM = 5;
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
-    return 0;
+    Scheduler scheduler(MAX_MEMORY, MAX_QUANTUM);
+    scheduler.schedule();
 }
