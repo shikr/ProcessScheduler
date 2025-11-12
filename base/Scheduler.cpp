@@ -19,6 +19,8 @@ void Scheduler::addProcess(const Process &process) {
         std::cout << std::endl << "Nuevo: " << process << std::endl;
         std::cout << *memoryManager << std::endl;
         processes.push(process);
+    } else {
+        blockedProcesses.push(process);
     }
 }
 
@@ -46,7 +48,21 @@ void Scheduler::schedule() {
         if (curr.isAlive()) {
             processes.push(curr);
             memoryManager->reallocate(curr);
-        } else memoryManager->deallocate(curr);
+        } else {
+            memoryManager->deallocate(curr);
+            // Intentar agregar procesos bloqueados
+            const auto blockedSize = blockedProcesses.size();
+            for (int i = 0; i < blockedSize; ++i) {
+                Process blocked = blockedProcesses.front();
+                blockedProcesses.pop();
+                if (memoryManager->allocate(blocked)) {
+                    std::cout << std::endl << "Desbloqueado: " << blocked << std::endl;
+                    processes.push(blocked);
+                } else {
+                    blockedProcesses.push(blocked);
+                }
+            }
+        }
         std::cout << std::endl << *memoryManager << std::endl;
     }
 }

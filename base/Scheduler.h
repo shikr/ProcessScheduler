@@ -11,6 +11,7 @@
 
 class Scheduler {
     std::queue<Process> processes;
+    std::queue<Process> blockedProcesses;
     int maxMemory;
     int maxQuantum;
     BaseMemory *memoryManager;
