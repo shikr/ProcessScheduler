@@ -7,17 +7,19 @@
 #include <chrono>
 #include "../util/random.h"
 
-static int QUANTUM = 1500;
+static int QUANTUM = 750;
 
 // Genera el tiempo para agregar un nuevo proceso
 static std::chrono::time_point<std::chrono::system_clock> genNextProcessTime() {
-    return std::chrono::system_clock::now() + std::chrono::milliseconds(random(350, 1000));
+    return std::chrono::system_clock::now() + std::chrono::milliseconds(random(1300, 1600));
 }
 
-void Scheduler::addProcess(const Process& process) {
-    std::cout << "Nuevo: " << process << " ";
-    processes.push(process);
-    if (!memoryManager->hasProcess(process)) memoryManager->allocate(process);
+void Scheduler::addProcess(const Process &process) {
+    if (memoryManager->allocate(process)) {
+        std::cout << std::endl << "Nuevo: " << process << std::endl;
+        std::cout << *memoryManager << std::endl;
+        processes.push(process);
+    }
 }
 
 [[noreturn]]
@@ -29,8 +31,6 @@ void Scheduler::schedule() {
             addProcess(Process(maxMemory, maxQuantum));
         auto end = std::chrono::system_clock::now() + std::chrono::milliseconds(QUANTUM);
         Process curr = processes.front();
-        curr.execute();
-        processes.pop();
         // Se bloquea mientras el proceso se ejecute un quantum
         while (std::chrono::system_clock::now() < end) {
             if (std::chrono::system_clock::now() > next) {
@@ -38,8 +38,14 @@ void Scheduler::schedule() {
                 next = genNextProcessTime();
             }
         }
-        if (curr.isAlive()) processes.push(curr);
+        curr.execute();
+        processes.pop();
+        std::cout << std::endl << "Atendido: " << curr << std::endl;
+        if (curr.isAlive()) {
+            processes.push(curr);
+            memoryManager->reallocate(curr);
+        }
         else memoryManager->deallocate(curr);
-        std::cout << std::endl << *memoryManager << std::endl;
+        std::cout << *memoryManager << std::endl;
     }
 }

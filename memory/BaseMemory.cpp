@@ -20,6 +20,17 @@ void BaseMemory::deallocate(const Process &process) {
     }
 }
 
+void BaseMemory::reallocate(const Process &process) {
+    for (auto it = memory.begin(); it != memory.end(); ++it) {
+        if (it->second.getPid() == process.getPid()) {
+            Process updatedProcess = process;
+            memory.erase(it);
+            memory.insert({it->first, updatedProcess});
+            return;
+        }
+    }
+}
+
 bool BaseMemory::hasProcess(const Process &process) const {
     // Busca un proceso en la memoria por su PID
     return std::ranges::any_of(memory.begin(), memory.end(), [&process](const std::pair<int, Process> &item) {

@@ -26,6 +26,8 @@ public:
 
     void deallocate(const Process &process);
 
+    void reallocate(const Process &process);
+
     [[nodiscard]] bool hasProcess(const Process &process) const;
 
     friend std::ostream &operator<<(std::ostream &os, const BaseMemory &baseMemory);

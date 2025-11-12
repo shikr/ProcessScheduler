@@ -17,7 +17,6 @@ Process::Process(const int maxMemory, const int maxQuantum) {
 
 void Process::execute() {
     quantum--;
-    std::cout << "Atendido: " << *this << std::endl;
 }
 
 bool Process::isAlive() const {
