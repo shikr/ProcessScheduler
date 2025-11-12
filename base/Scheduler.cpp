@@ -26,11 +26,11 @@ void Scheduler::addProcess(const Process &process) {
 void Scheduler::schedule() {
     auto next = genNextProcessTime();
     std::cout << std::endl << *memoryManager << std::endl;
+    addProcess(Process(maxMemory, maxQuantum));
     while (true) {
-        if (processes.empty())
-            addProcess(Process(maxMemory, maxQuantum));
         auto end = std::chrono::system_clock::now() + std::chrono::milliseconds(QUANTUM);
         Process curr = processes.front();
+        std::cout << std::endl << "Atendiendo: " << curr << std::endl;
         // Se bloquea mientras el proceso se ejecute un quantum
         while (std::chrono::system_clock::now() < end) {
             if (std::chrono::system_clock::now() > next) {
@@ -40,12 +40,13 @@ void Scheduler::schedule() {
         }
         curr.execute();
         processes.pop();
-        std::cout << std::endl << "Atendido: " << curr << std::endl;
+        // std::cout << std::endl << "Atendido: " << curr << std::endl;
         if (curr.isAlive()) {
             processes.push(curr);
             memoryManager->reallocate(curr);
-        }
-        else memoryManager->deallocate(curr);
-        std::cout << *memoryManager << std::endl;
+        } else memoryManager->deallocate(curr);
+        if (processes.empty())
+            addProcess(Process(maxMemory, maxQuantum));
+        std::cout << std::endl << *memoryManager << std::endl;
     }
 }
