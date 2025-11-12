@@ -9,4 +9,9 @@ add_executable(ProcessScheduler main.cpp
         util/random.cpp
         util/random.h
         base/Scheduler.cpp
-        base/Scheduler.h)
+        base/Scheduler.h
+        memory/BaseMemory.cpp
+        memory/BaseMemory.h
+        memory/FirstMemory.cpp
+        memory/FirstMemory.h
+)

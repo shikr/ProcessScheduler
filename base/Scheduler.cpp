@@ -8,7 +8,6 @@
 #include "../util/random.h"
 
 static int QUANTUM = 1500;
-static int MEMORY = 4096;
 
 // Genera el tiempo para agregar un nuevo proceso
 static std::chrono::time_point<std::chrono::system_clock> genNextProcessTime() {
@@ -18,11 +17,13 @@ static std::chrono::time_point<std::chrono::system_clock> genNextProcessTime() {
 void Scheduler::addProcess(const Process& process) {
     std::cout << "Nuevo: " << process << " ";
     processes.push(process);
+    if (!memoryManager->hasProcess(process)) memoryManager->allocate(process);
 }
 
 [[noreturn]]
 void Scheduler::schedule() {
     auto next = genNextProcessTime();
+    std::cout << std::endl << *memoryManager << std::endl;
     while (true) {
         if (processes.empty())
             addProcess(Process(maxMemory, maxQuantum));
@@ -38,6 +39,7 @@ void Scheduler::schedule() {
             }
         }
         if (curr.isAlive()) processes.push(curr);
-        else std::cout << std::endl << "Finalizado: " << curr << std::endl;
+        else memoryManager->deallocate(curr);
+        std::cout << std::endl << *memoryManager << std::endl;
     }
 }
