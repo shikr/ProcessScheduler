@@ -7,7 +7,7 @@
 #include "BaseMemory.h"
 
 
-class BestMemory : public BaseMemory {
+class BestMemory final : public BaseMemory {
 public:
     bool allocate(const Process &process) override;
 };
