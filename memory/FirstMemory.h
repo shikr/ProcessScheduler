@@ -9,7 +9,6 @@
 class FirstMemory final : public BaseMemory {
 public:
     bool allocate(const Process &process) override;
-    void deallocate(const Process &process) override;
 };
 
 

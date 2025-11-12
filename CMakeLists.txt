@@ -14,4 +14,6 @@ add_executable(ProcessScheduler main.cpp
         memory/BaseMemory.h
         memory/FirstMemory.cpp
         memory/FirstMemory.h
+        memory/BestMemory.cpp
+        memory/BestMemory.h
 )
