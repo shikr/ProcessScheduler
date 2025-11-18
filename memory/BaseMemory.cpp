@@ -6,6 +6,7 @@
 
 #include <algorithm>
 #include <ostream>
+#include <ranges>
 
 bool ProcessDummy::operator()(const std::pair<int, Process> &a, const std::pair<int, Process> &b) const {
     return a.first < b.first;

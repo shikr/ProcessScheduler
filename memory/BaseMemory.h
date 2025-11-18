@@ -5,8 +5,6 @@
 #ifndef PROCESSSCHEDULER_BASEMEMORY_H
 #define PROCESSSCHEDULER_BASEMEMORY_H
 #include <set>
-#include <ostream>
-#include <ranges>
 
 #include "../base/Process.h"
 
