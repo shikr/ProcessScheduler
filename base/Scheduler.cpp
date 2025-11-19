@@ -24,7 +24,8 @@ void Scheduler::addProcess(const Process& process) {
     // allocate regresa verdadero cuando el proceso se puede ajustar a la memoria
     if (memoryManager->allocate(process)) {
         std::cout << std::endl << "Nuevo: " << process << std::endl;
-        std::cout << *memoryManager << std::endl;
+        std::cout << "Memoria: " << *memoryManager << std::endl;
+        std::cout << "Cola: " << *this << std::endl;
         // si el proceso se agrego a la memoria, tambien se agrega a la cola de
         // procesos
         processes.push(process);
@@ -46,8 +47,6 @@ void Scheduler::schedule() {
     while (true) {
         // calcula el tiempo en el que se acabara el quantum
         auto end = std::chrono::system_clock::now() + std::chrono::milliseconds(QUANTUM);
-        Process curr = processes.front();
-        std::cout << std::endl << "Atendiendo: " << curr << std::endl;
         // Se bloquea mientras el proceso se ejecute un quantum
         while (std::chrono::system_clock::now() < end) {
             // si mientras se esta ejecutando un quantum, es tiempo de generar otro
@@ -58,6 +57,10 @@ void Scheduler::schedule() {
                 next = genNextProcessTime();
             }
         }
+        Process curr = processes.front();
+        std::cout << std::endl << "Memoria inicial: " << memoryManager << std::endl;
+        std::cout << "Cola: " << *this << std::endl;
+        std::cout << "Ejecutandose: " << curr << std::endl;
         // ejecuta el proceso actual (le resta los quantum)
         curr.execute();
         // elimina el proceso de la cola
@@ -66,7 +69,6 @@ void Scheduler::schedule() {
         // antes de dejar la memoría vacía
         if (processes.empty() && !curr.isAlive())
             addProcess(Process(maxMemory, maxQuantum));
-        // std::cout << std::endl << "Atendido: " << curr << std::endl;
         // si el proceso sigue vivo lo agrega al final de la cola y lo actualiza en
         // la memoria
         if (curr.isAlive()) {
@@ -85,7 +87,7 @@ void Scheduler::schedule() {
                 if (memoryManager->allocate(blocked)) {
                     // si se ajusto a la memoria, se desbloquea y se agrega a la cola de
                     // procesos
-                    std::cout << std::endl << "Desbloqueado: " << blocked << std::endl;
+                    // std::cout << std::endl << "Desbloqueado: " << blocked << std::endl;
                     processes.push(blocked);
                 } else {
                     // si no se pudo ajustar, se queda en la cola de bloqueados
@@ -93,7 +95,7 @@ void Scheduler::schedule() {
                 }
             }
         }
-        std::cout << std::endl << *memoryManager << std::endl;
+        std::cout << "Memoria final: " << *memoryManager << std::endl;
     }
 }
 
