@@ -14,10 +14,11 @@ struct ProcessDummy {
 
 class BaseMemory {
 protected:
-    const int maxMemory = 4096;
+    int maxMemory = 4096;
     std::set<std::pair<int, Process>, ProcessDummy> memory;
 
 public:
+    explicit BaseMemory(int);
     virtual ~BaseMemory() = default;
 
     virtual bool allocate(const Process &process) = 0;

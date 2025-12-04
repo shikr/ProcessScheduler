@@ -15,7 +15,7 @@ class Process {
 
 public:
     Process(int maxMemory, int maxQuantum);
-    void execute();
+    void execute(int);
     [[nodiscard]] int getMemory() const { return memory; }
     [[nodiscard]] int getPid() const { return pid; }
     [[nodiscard]] bool isAlive() const;

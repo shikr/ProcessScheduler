@@ -8,6 +8,7 @@
 
 class FirstMemory final : public BaseMemory {
 public:
+    explicit FirstMemory(int);
     bool allocate(const Process &process) override;
 };
 

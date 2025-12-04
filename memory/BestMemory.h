@@ -9,6 +9,7 @@
 
 class BestMemory final : public BaseMemory {
 public:
+    explicit BestMemory(int);
     bool allocate(const Process &process) override;
 };
 

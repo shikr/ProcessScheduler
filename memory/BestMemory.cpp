@@ -4,6 +4,9 @@
 
 #include "BestMemory.h"
 
+BestMemory::BestMemory(const int m) : BaseMemory(m) {}
+
+
 bool BestMemory::allocate(const Process &process) {
     int bestStart = -1;
     int bestSize = maxMemory + 1;

@@ -12,15 +12,16 @@
 
 class Scheduler {
     std::queue<Process> processes;
-    std::queue<Process> blockedProcesses;
+    Process* blocked = nullptr;
     int maxMemory;
     int maxQuantum;
+    int systemQuantum;
     BaseMemory* memoryManager;
     void addProcess(const Process& process);
 
    public:
-    Scheduler(const int maxMemory, const int maxQuantum, BaseMemory* memory)
-        : maxMemory(maxMemory), maxQuantum(maxQuantum), memoryManager(memory) {};
+    Scheduler(const int maxMemory, const int maxQuantum, BaseMemory* memory, const int pQ)
+        : maxMemory(maxMemory), maxQuantum(maxQuantum), systemQuantum(pQ), memoryManager(memory) {};
     [[noreturn]] void schedule();
 
     friend std::ostream& operator<<(std::ostream&, const Scheduler&);

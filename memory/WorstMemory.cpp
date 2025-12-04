@@ -6,6 +6,8 @@
 
 class Process;
 
+WorstMemory::WorstMemory(const int m) : BaseMemory(m) {}
+
 bool WorstMemory::allocate(const Process &process) {
     int worstStart = -1;
     int worstSize = -1;

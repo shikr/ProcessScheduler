@@ -12,6 +12,9 @@ bool ProcessDummy::operator()(const std::pair<int, Process> &a, const std::pair<
     return a.first < b.first;
 }
 
+BaseMemory::BaseMemory(const int m) : maxMemory(m) {}
+
+
 void BaseMemory::deallocate(const Process &process) {
     for (auto it = memory.begin(); it != memory.end(); ++it) {
         if (it->second.getPid() == process.getPid()) {

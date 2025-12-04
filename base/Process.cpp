@@ -15,8 +15,8 @@ Process::Process(const int maxMemory, const int maxQuantum) {
     quantum = random(1, maxQuantum);
 }
 
-void Process::execute() {
-    quantum--;
+void Process::execute(const int quantumToExecute) {
+    quantum -= quantumToExecute;
 }
 
 bool Process::isAlive() const {
