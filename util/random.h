@@ -6,9 +6,7 @@
 #define PROCESSSCHEDULER_RANDOM_H
 #include <random>
 
-
 int random(int min, int max);
 int random(std::uniform_int_distribution<> distribution);
 
-
-#endif //PROCESSSCHEDULER_RANDOM_H
+#endif  // PROCESSSCHEDULER_RANDOM_H

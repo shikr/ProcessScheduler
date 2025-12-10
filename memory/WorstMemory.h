@@ -6,12 +6,10 @@
 #define PROCESSSCHEDULER_WORSTMEMORY_H
 #include "BaseMemory.h"
 
-
 class WorstMemory final : public BaseMemory {
-public:
-    explicit WorstMemory(int);
-    bool allocate(const Process &process) override;
+ public:
+  explicit WorstMemory(int);
+  bool allocate(const Process& process) override;
 };
 
-
-#endif //PROCESSSCHEDULER_WORSTMEMORY_H
+#endif  // PROCESSSCHEDULER_WORSTMEMORY_H

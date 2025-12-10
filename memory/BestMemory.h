@@ -6,12 +6,10 @@
 #define PROCESSSCHEDULER_BESTMEMORY_H
 #include "BaseMemory.h"
 
-
 class BestMemory final : public BaseMemory {
-public:
-    explicit BestMemory(int);
-    bool allocate(const Process &process) override;
+ public:
+  explicit BestMemory(int);
+  bool allocate(const Process& process) override;
 };
 
-
-#endif //PROCESSSCHEDULER_BESTMEMORY_H
+#endif  // PROCESSSCHEDULER_BESTMEMORY_H

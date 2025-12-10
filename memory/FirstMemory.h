@@ -7,10 +7,9 @@
 #include "BaseMemory.h"
 
 class FirstMemory final : public BaseMemory {
-public:
-    explicit FirstMemory(int);
-    bool allocate(const Process &process) override;
+ public:
+  explicit FirstMemory(int);
+  bool allocate(const Process& process) override;
 };
 
-
-#endif //PROCESSSCHEDULER_FIRSTMEMORY_H
+#endif  // PROCESSSCHEDULER_FIRSTMEMORY_H

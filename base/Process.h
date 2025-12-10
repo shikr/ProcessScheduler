@@ -6,22 +6,20 @@
 #define PROCESSSCHEDULER_PROCESS_H
 #include <ostream>
 
-
 class Process {
-    static int currentProcess;
-    int quantum;
-    int memory;
-    int pid;
+  static int currentProcess;
+  int quantum;
+  int memory;
+  int pid;
 
-public:
-    Process(int maxMemory, int maxQuantum);
-    void execute(int);
-    [[nodiscard]] int getMemory() const { return memory; }
-    [[nodiscard]] int getPid() const { return pid; }
-    [[nodiscard]] bool isAlive() const;
+ public:
+  Process(int maxMemory, int maxQuantum);
+  void execute(int);
+  [[nodiscard]] int getMemory() const { return memory; }
+  [[nodiscard]] int getPid() const { return pid; }
+  [[nodiscard]] bool isAlive() const;
 
-    friend std::ostream& operator<<(std::ostream&, const Process&);
+  friend std::ostream& operator<<(std::ostream&, const Process&);
 };
 
-
-#endif //PROCESSSCHEDULER_PROCESS_H
+#endif  // PROCESSSCHEDULER_PROCESS_H

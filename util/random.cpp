@@ -3,6 +3,7 @@
 //
 
 #include "random.h"
+
 #include <random>
 
 static std::random_device rd;
@@ -21,6 +22,4 @@ int random(const int min, const int max) {
 /**
  * Genera un numero aleatorio a partir de una distribucion
  */
-int random(std::uniform_int_distribution<> distribution) {
-  return distribution(eng);
-}
+int random(std::uniform_int_distribution<> distribution) { return distribution(eng); }
