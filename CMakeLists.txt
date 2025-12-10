@@ -4,8 +4,8 @@ project(ProcessScheduler)
 set(CMAKE_CXX_STANDARD 23)
 
 add_executable(ProcessScheduler main.cpp
-        base/process.cpp
-        base/process.h
+        base/Process.cpp
+        base/Process.h
         util/random.cpp
         util/random.h
         base/Scheduler.cpp
