@@ -13,7 +13,7 @@ int main() {
   int systemQuantum = 4;
   int tabSelector = 0;
   std::unique_ptr<Scheduler> scheduler;
-  std::unique_ptr<BaseMemory> memory = std::make_unique<FirstMemory>(memorySize);
+  std::shared_ptr<BaseMemory> memory = std::make_shared<FirstMemory>(memorySize);
   ftxui::ScreenInteractive screen = ftxui::ScreenInteractive::FullscreenAlternateScreen();
 
   // clang-format off
@@ -25,7 +25,10 @@ int main() {
       .processQuantum = &processQuantum,
       .systemQuantum = &systemQuantum
     },
-         [] {}, screen.ExitLoopClosure()
+    [&] {
+      scheduler = std::make_unique<Scheduler>(processMemory, processQuantum, memory, systemQuantum);
+    },
+    screen.ExitLoopClosure()
   )}, &tabSelector);
   // clang-format on
 

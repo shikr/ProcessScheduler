@@ -31,12 +31,13 @@ class Scheduler {
   int maxMemory;
   int maxQuantum;
   int systemQuantum;
-  BaseMemory* memoryManager;
+  std::shared_ptr<BaseMemory> memoryManager;
   std::pair<StepType, Process> addProcess();
   std::list<Process> normalize() const;
 
  public:
-  Scheduler(const int maxMemory, const int maxQuantum, BaseMemory* memory, const int pQ)
+  Scheduler(const int maxMemory, const int maxQuantum, std::shared_ptr<BaseMemory> memory,
+            const int pQ)
       : maxMemory(maxMemory),
         maxQuantum(maxQuantum),
         systemQuantum(pQ),

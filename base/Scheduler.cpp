@@ -11,8 +11,6 @@
 
 #include "Process.h"
 
-static int QUANTUM = 1000;
-
 std::pair<StepType, Process> Scheduler::addProcess() {
   const auto process = Process(maxMemory, maxQuantum);
   // allocate regresa verdadero cuando el proceso se puede ajustar a la memoria

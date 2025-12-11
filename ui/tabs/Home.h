@@ -7,7 +7,7 @@
 #include "../../memory/BaseMemory.h"
 
 struct SchedulerParams {
-  std::unique_ptr<BaseMemory>* memory;
+  std::shared_ptr<BaseMemory>* memory;
   int *memorySize, *processMemory, *processQuantum, *systemQuantum;
 };
 

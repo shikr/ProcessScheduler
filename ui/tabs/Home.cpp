@@ -27,14 +27,14 @@ static int size(int memory) {
   return 2 * size(memory - 1);
 }
 
-static std::unique_ptr<BaseMemory> memoryFit(int fit, int memory) {
+static std::shared_ptr<BaseMemory> memoryFit(int fit, int memory) {
   switch (fit) {
     case 0:
-      return std::make_unique<FirstMemory>(memory);
+      return std::make_shared<FirstMemory>(memory);
     case 1:
-      return std::make_unique<BestMemory>(memory);
+      return std::make_shared<BestMemory>(memory);
     default:
-      return std::make_unique<WorstMemory>(memory);
+      return std::make_shared<WorstMemory>(memory);
   }
 }
 
