@@ -1,62 +1,33 @@
-#include <iostream>
+#include <ftxui/component/component.hpp>
+#include <ftxui/component/screen_interactive.hpp>
+#include <memory>
 
 #include "base/Scheduler.h"
-#include "memory/BestMemory.h"
 #include "memory/FirstMemory.h"
-#include "memory/WorstMemory.h"
-
-constexpr int MAX_MEMORY = 2048;
-constexpr int MAX_QUANTUM = 5;
+#include "ui/tabs/Home.h"
 
 int main() {
-  int choice, memorySize, maxMemory, maxQuantum, systemQuantum;
-  BaseMemory* memoryManager;
-  std::cout << "1. 8192" << std::endl;
-  std::cout << "2. 4096" << std::endl;
-  std::cout << "3. 1024" << std::endl;
-  std::cout << "Seleccione un tamaño de memoria (1-3): ";
-  std::cin >> choice;
+  int memorySize = 1024;
+  int processMemory = 128;
+  int processQuantum = 10;
+  int systemQuantum = 4;
+  int tabSelector = 0;
+  std::unique_ptr<Scheduler> scheduler;
+  std::unique_ptr<BaseMemory> memory = std::make_unique<FirstMemory>(memorySize);
+  ftxui::ScreenInteractive screen = ftxui::ScreenInteractive::FullscreenAlternateScreen();
 
-  switch (choice) {
-    case 1:
-      memorySize = 8192;
-      break;
-    case 2:
-      memorySize = 4096;
-      break;
-    case 3:
-      memorySize = 1024;
-      break;
-    default:
-      return 1;
-  }
+  // clang-format off
+  auto component = ftxui::Container::Tab({
+    Home({
+      .memory = &memory,
+      .memorySize = &memorySize,
+      .processMemory = &processMemory,
+      .processQuantum = &processQuantum,
+      .systemQuantum = &systemQuantum
+    },
+         [] {}, screen.ExitLoopClosure()
+  )}, &tabSelector);
+  // clang-format on
 
-  std::cout << "1. Primer Ajuste" << std::endl;
-  std::cout << "2. Mejor Ajuste" << std::endl;
-  std::cout << "3. Peor Ajuste" << std::endl;
-  std::cout << "Seleccione un metodo de gestion de memoria (1-3): ";
-  std::cin >> choice;
-
-  std::cout << "Tamaño de maximo de memoria por proceso: ";
-  std::cin >> maxMemory;
-  std::cout << "Quantum maximo por proceso: ";
-  std::cin >> maxQuantum;
-  std::cout << "Quantum del sistema: ";
-  std::cin >> systemQuantum;
-  switch (choice) {
-    case 1:
-      memoryManager = new FirstMemory(memorySize);
-      break;
-    case 2:
-      memoryManager = new BestMemory(memorySize);
-      break;
-    case 3:
-      memoryManager = new WorstMemory(memorySize);
-      break;
-    default:
-      return 1;
-  }
-
-  Scheduler scheduler(maxMemory, maxQuantum, memoryManager, systemQuantum);
-  scheduler.schedule();
+  screen.Loop(component);
 }

@@ -25,6 +25,10 @@ add_executable(ProcessScheduler main.cpp
         memory/BestMemory.h
         memory/WorstMemory.cpp
         memory/WorstMemory.h
+        ui/tabs/Home.cpp
+        ui/tabs/Home.h
+        ui/components/NumberInput.cpp
+        ui/components/NumberInput.h
 )
 
 target_link_libraries(ProcessScheduler PRIVATE
