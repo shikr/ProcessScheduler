@@ -4,6 +4,8 @@
 
 #ifndef PROCESSSCHEDULER_BASEMEMORY_H
 #define PROCESSSCHEDULER_BASEMEMORY_H
+#include <list>
+#include <ostream>
 #include <set>
 
 #include "../base/Process.h"
@@ -11,6 +13,13 @@
 struct ProcessDummy {
   bool operator()(const std::pair<int, Process>& a,
                   const std::pair<int, Process>& b) const;
+};
+
+struct MemoryBlock {
+  int start;
+  int size;
+  bool isFree;
+  Process* process;
 };
 
 class BaseMemory {
@@ -28,9 +37,15 @@ class BaseMemory {
 
   void reallocate(const Process& process);
 
+  void clear();
+
   [[nodiscard]] bool hasProcess(const Process& process) const;
+
+  std::list<MemoryBlock> normalize() const;
 
   friend std::ostream& operator<<(std::ostream& os, const BaseMemory& baseMemory);
 };
+
+std::ostream& operator<<(std::ostream&, const MemoryBlock&);
 
 #endif  // PROCESSSCHEDULER_BASEMEMORY_H

@@ -5,6 +5,7 @@
 #include "BaseMemory.h"
 
 #include <algorithm>
+#include <list>
 #include <ostream>
 #include <ranges>
 
@@ -35,6 +36,8 @@ void BaseMemory::reallocate(const Process& process) {
   }
 }
 
+void BaseMemory::clear() { memory.clear(); }
+
 bool BaseMemory::hasProcess(const Process& process) const {
   // Busca un proceso en la memoria por su PID
   return std::ranges::any_of(memory.begin(), memory.end(),
@@ -43,25 +46,60 @@ bool BaseMemory::hasProcess(const Process& process) const {
                              });
 }
 
+std::list<MemoryBlock> BaseMemory::normalize() const {
+  std::list<MemoryBlock> blocks;
+
+  int current = 0;
+  for (const auto& [start, process] : memory) {
+    if (start > current) {
+      blocks.push_back({
+          .start = current,
+          .size = start - current,
+          .isFree = true,
+          .process = nullptr,
+      });
+    }
+
+    blocks.push_back({
+        .start = start,
+        .size = process.getMemory(),
+        .isFree = false,
+        .process = (Process*)&process,
+    });
+
+    current = start + process.getMemory();
+  }
+
+  if (current < maxMemory) {
+    blocks.push_back({
+        .start = current,
+        .size = maxMemory - current,
+        .isFree = true,
+        .process = nullptr,
+    });
+  }
+
+  return blocks;
+}
+
 std::ostream& operator<<(std::ostream& os, const BaseMemory& baseMemory) {
-  auto memory = baseMemory.memory;
-  if (memory.empty()) {
-    os << "[0, " << baseMemory.maxMemory << ", 0]";
-    return os;
+  auto memory = baseMemory.normalize();
+  bool first = true;
+
+  for (const auto& block : memory) {
+    if (!first) os << " ";
+    first = false;
+    os << block;
   }
-  auto it = memory.begin();
-  int lastEnd = 0;
-  while (it != memory.end()) {
-    if (it->first > lastEnd) {
-      os << " [0, " << (it->first - lastEnd) << ", 0] ";
-    }
-    lastEnd = it->first + it->second.getMemory();
-    os << (it++)->second;
-    if (it != memory.end()) {
-      os << " ";
-    } else if (lastEnd < baseMemory.maxMemory) {
-      os << " [0, " << (baseMemory.maxMemory - lastEnd) << ", 0]";
-    }
-  }
+
+  return os;
+}
+
+std::ostream& operator<<(std::ostream& os, const MemoryBlock& block) {
+  if (block.isFree)
+    os << "[0, " << block.size << ", 0]";
+  else
+    os << *block.process;
+
   return os;
 }
