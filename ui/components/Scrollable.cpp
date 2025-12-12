@@ -29,13 +29,13 @@ class Impl : public ComponentBase {
         *scroll_x = std::max(0.f, *scroll_x - *increment);
         return true;
       } else if (ev == Event::ArrowRight && *scroll_x < 1.f) {
-        *scroll_x = std::min(1.f, *scroll_y + *increment);
+        *scroll_x = std::min(1.f, *scroll_x + *increment);
         return true;
       } else if (ev == Event::PageUp) {
         *scroll_y = 0.f;
         return true;
       } else if (ev == Event::PageDown) {
-        *scroll_x = 1.f;
+        *scroll_y = 1.f;
         return true;
       } else if (ev.is_mouse() && ev.mouse().button == Mouse::WheelUp &&
                  *scroll_y > 0.f) {
