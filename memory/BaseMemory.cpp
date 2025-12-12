@@ -6,6 +6,7 @@
 
 #include <algorithm>
 #include <list>
+#include <memory>
 #include <ostream>
 #include <ranges>
 
@@ -64,7 +65,7 @@ std::list<MemoryBlock> BaseMemory::normalize() const {
         .start = start,
         .size = process.getMemory(),
         .isFree = false,
-        .process = (Process*)&process,
+        .process = std::make_shared<Process>(process),
     });
 
     current = start + process.getMemory();

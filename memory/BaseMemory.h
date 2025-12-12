@@ -5,6 +5,7 @@
 #ifndef PROCESSSCHEDULER_BASEMEMORY_H
 #define PROCESSSCHEDULER_BASEMEMORY_H
 #include <list>
+#include <memory>
 #include <ostream>
 #include <set>
 
@@ -19,7 +20,7 @@ struct MemoryBlock {
   int start;
   int size;
   bool isFree;
-  Process* process;
+  std::shared_ptr<Process> process;
 };
 
 class BaseMemory {
