@@ -5,16 +5,9 @@
 #include <ftxui/component/component_base.hpp>
 #include <ftxui/dom/elements.hpp>
 
+#include "../../util/color.h"
+
 using namespace ftxui;
-
-static Color processColor(int pid) {
-  if (pid <= 0) return Color::White;
-
-  const float kGoldenRatio = 0.6180339887f;
-  float hue = std::fmod(pid * kGoldenRatio, 1.0f);
-
-  return Color::HSV(hue * 255, 204, 178);
-}
 
 Element memoryBar(std::unique_ptr<Step>* step, int* memorySize) {
   Elements blocks;
