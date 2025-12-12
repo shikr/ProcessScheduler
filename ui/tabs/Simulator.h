@@ -15,5 +15,6 @@ struct SimulatorParams {
   int* processQuantum;
 };
 
-ftxui::Component Simulator(SimulatorParams, std::function<void()>);
+ftxui::Component Simulator(SimulatorParams, std::function<void()> playpause,
+                           std::function<void()> back);
 #endif  // !PROCESSSCHEDULER_SIMULATOR_H

@@ -30,7 +30,8 @@ static std::vector<Element> logs(std::vector<std::string> log) {
   return elements;
 }
 
-Component Simulator(SimulatorParams params, std::function<void()> back) {
+Component Simulator(SimulatorParams params, std::function<void()> playpause,
+                    std::function<void()> back) {
   static std::vector<std::string> log;
   static int view = 0;
   static float scroll_y = 1.f;

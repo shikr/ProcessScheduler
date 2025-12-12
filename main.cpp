@@ -1,3 +1,4 @@
+#include <chrono>
 #include <ftxui/component/component.hpp>
 #include <ftxui/component/screen_interactive.hpp>
 #include <memory>
@@ -7,6 +8,7 @@
 #include "memory/FirstMemory.h"
 #include "ui/tabs/Home.h"
 #include "ui/tabs/Simulator.h"
+#include "util/Timer.h"
 
 int main() {
   int memorySize = 1024;
@@ -18,6 +20,17 @@ int main() {
   std::shared_ptr<BaseMemory> memory = std::make_shared<FirstMemory>(memorySize);
   ftxui::ScreenInteractive screen = ftxui::ScreenInteractive::FullscreenAlternateScreen();
   std::unique_ptr<Step> step = nullptr;
+  auto delay = std::chrono::milliseconds(1000);
+
+  Timer timer(
+      [&] {
+        if (step)
+          *step = scheduler->schedule();
+        else
+          step = std::make_unique<Step>(scheduler->schedule());
+        screen.RequestAnimationFrame();
+      },
+      &delay);
 
   // clang-format off
   auto component = ftxui::Container::Tab(
@@ -31,6 +44,7 @@ int main() {
       },
       [&] {
         scheduler = std::make_unique<Scheduler>(processMemory, processQuantum, memory, systemQuantum);
+        timer.start();
         tabSelector = 1;
       },
       screen.ExitLoopClosure()),
@@ -43,6 +57,11 @@ int main() {
         .processQuantum = &processQuantum
       },
       [&] {
+        if (timer.isRunning()) timer.stop();
+        else timer.start();
+      },
+      [&] {
+        timer.stop();
         Process::Reset();
         step.reset();
         tabSelector = 0;
