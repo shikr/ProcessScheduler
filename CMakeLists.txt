@@ -31,6 +31,8 @@ add_executable(ProcessScheduler main.cpp
         ui/tabs/Simulator.h
         ui/components/NumberInput.cpp
         ui/components/NumberInput.h
+        ui/components/Scrollable.cpp
+        ui/components/Scrollable.h
 )
 
 target_link_libraries(ProcessScheduler PRIVATE
