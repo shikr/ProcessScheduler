@@ -5,6 +5,7 @@
 #include <string>
 
 #include "../../base/Scheduler.h"
+#include "../../util/color.h"
 
 using namespace ftxui;
 
@@ -15,10 +16,14 @@ Element processQueue(std::unique_ptr<Step>* step) {
     auto qu = step->get()->queue;
 
     for (const auto& process : qu) {
+      auto c = processColor(process.getPid());
+
       blocks.push_back(
           window(text("P" + std::to_string(process.getPid())),
                  vbox({text("Tamaño: " + std::to_string(process.getMemory()) + " KB"),
-                       text("Cuantos: " + std::to_string(process.getQuantum()))})));
+                       text("Cuantos: " + std::to_string(process.getQuantum()))}) |
+                     color(Color::White)) |
+          color(c));
     }
   }
 
