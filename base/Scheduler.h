@@ -48,4 +48,6 @@ class Scheduler {
   friend std::ostream& operator<<(std::ostream&, const Scheduler&);
 };
 
+std::ostream& operator<<(std::ostream&, const Step&);
+
 #endif  // PROCESSSCHEDULER_SCHEDULER_H

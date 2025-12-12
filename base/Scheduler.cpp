@@ -86,3 +86,32 @@ std::ostream& operator<<(std::ostream& os, const Scheduler& obj) {
 
   return os;
 }
+
+std::ostream& operator<<(std::ostream& os, const Step& step) {
+  switch (step.type) {
+    case StepType::NEW:
+      os << "Nuevo: ";
+      break;
+    case StepType::BLOCKED:
+      os << "Bloqueado: ";
+      break;
+    case StepType::UNLOCKED:
+      os << "Desbloqueado: ";
+      break;
+  }
+  os << step.process << std::endl;
+  os << "Ejecutado: " << step.current << std::endl;
+  if (!step.queue.empty()) {
+    os << "Cola: ";
+    for (const auto& process : step.queue) {
+      os << process << " ";
+    }
+    os << std::endl;
+  }
+  os << "Memoria: ";
+  for (const auto& block : step.memory) {
+    os << block << " ";
+  }
+
+  return os;
+}
