@@ -17,6 +17,8 @@ add_executable(ProcessScheduler main.cpp
         util/random.h
         util/color.cpp
         util/color.h
+        util/Timer.cpp
+        util/Timer.h
         base/Scheduler.cpp
         base/Scheduler.h
         memory/BaseMemory.cpp
