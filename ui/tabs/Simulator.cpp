@@ -1,6 +1,5 @@
 #include "Simulator.h"
 
-#include <cmath>
 #include <ftxui/component/component.hpp>
 #include <ftxui/component/component_base.hpp>
 #include <ftxui/dom/elements.hpp>
@@ -10,6 +9,8 @@
 #include <vector>
 
 #include "../../base/Scheduler.h"
+#include "../components/MemoryBar.h"
+#include "../components/Scrollable.h"
 
 using namespace ftxui;
 
@@ -27,18 +28,10 @@ static std::vector<Element> logs(std::vector<std::string> log) {
   return elements;
 }
 
-static Color processColor(int pid) {
-  if (pid <= 0) return Color::White;
-
-  const float kGoldenRatio = 0.6180339887f;
-  float hue = std::fmod(pid * kGoldenRatio, 1.0f);
-
-  return Color::HSV(hue * 255, 204, 178);
-}
-
 Component Simulator(SimulatorParams params, std::function<void()> back) {
   static std::vector<std::string> log;
   static int view = 0;
+  static float scroll_y = 1.f;
 
   auto button = Button("Siguiente", [=] {
     auto step = params.scheduler->get()->schedule();
@@ -48,54 +41,37 @@ Component Simulator(SimulatorParams params, std::function<void()> back) {
     ss << step;
 
     log.push_back(ss.str());
+    scroll_y = 1.f;
   });
 
   auto stop_button = Button("Inicio", [=] {
     log.clear();
     params.scheduler->get()->clear();
+    scroll_y = 1.f;
+    view = 0;
     back();
   });
 
-  auto view_menu = Menu(std::vector<std::string>{"Ciclo", "Registros"}, &view,
-                        {.on_enter = [=] { button->TakeFocus(); }});
+  std::vector<std::string> entries = {"Ciclo", "Registros"};
 
-  auto container = Container::Horizontal({view_menu, button, stop_button});
+  auto view_menu = Menu(entries, &view, {.on_enter = [=] { button->TakeFocus(); }});
+
+  auto status = Container::Tab(
+      {MemoryBar([](Elements blocks) { return hflow(blocks); }, params.step,
+                 params.memorySize),
+       Scrollable(
+           [](bool focused) {
+             return vbox(logs(log)) | hscroll_indicator | vscroll_indicator |
+                    color(focused ? Color::Yellow : Color::White);
+           },
+           {.scroll_y = &scroll_y})},
+      &view);
+
+  auto controls = Container::Horizontal({view_menu, button, stop_button});
+  auto container = Container::Vertical({status, controls});
 
   return Renderer(container, [=] {
-    Elements blocks;
-    std::list<MemoryBlock> memory;
-
-    int chunkSize = 3;
-
-    if (*params.step)
-      memory = params.step->get()->memory;
-    else
-      memory.push_back(
-          {.start = 0, .size = *params.memorySize, .isFree = true, .process = nullptr});
-    auto value = 200 / (double)*params.memorySize;
-
-    for (const auto& block : memory) {
-      Color c = processColor(block.isFree ? 0 : block.process->getPid());
-      std::string label =
-          block.isFree ? " " : "P" + std::to_string(block.process->getPid());
-
-      int numChunks = ceil(value * (double)block.size);
-      int f = numChunks - label.size();
-
-      if (f > 0)
-        label = std::string(f / 2, ' ') + label + std::string(f / 2, ' ') +
-                std::string(f % 2, ' ');
-
-      for (int i = 0; i < label.size(); i += chunkSize)
-        blocks.push_back(text(label.substr(i, chunkSize)) | bgcolor(c) |
-                         color(Color::White));
-    }
-
-    return vbox({(view != 0 ? window(text("Registros"),
-                                     vbox(logs(log)) | focusPositionRelative(0.f, 1.f) |
-                                         hscroll_indicator | vscroll_indicator | frame)
-                            : window(text("hola"), hflow(blocks))) |
-                     flex,
+    return vbox({window(text(entries[view]), status->Render()) | flex,
                  window(text("Controles"),
                         hbox({vbox({text("Vista"), view_menu->Render()}), filler(),
                               button->Render(), stop_button->Render(), filler()}))});
