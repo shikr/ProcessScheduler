@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "../../base/Scheduler.h"
+#include "../../util/color.h"
 #include "../components/Scrollable.h"
 #include "../elements/memoryBar.h"
 #include "../elements/processQueue.h"
@@ -57,7 +58,33 @@ Component Simulator(SimulatorParams params, std::function<void()> back) {
 
   auto view_menu = Menu(entries, &view, {.on_enter = [=] { button->TakeFocus(); }});
   auto status_component = Renderer([=] {
+    Elements info = {
+        text("Tamaño de la memoria: " + std::to_string(*params.memorySize)),
+        text("Cuanto del sistema: " + std::to_string(*params.systemQuantum)),
+        text("Tamaño máximo de memoria por proceso: " +
+             std::to_string(*params.processMemory)),
+        text("Cuanto máximo por proceso: " + std::to_string(*params.processQuantum))};
+    if (*params.step) {
+      std::ostringstream ss;
+      std::string type;
+      switch (params.step->get()->type) {
+        case StepType::NEW:
+          type = "Nuevo";
+          break;
+        case StepType::BLOCKED:
+          type = "Bloqueado";
+          break;
+        default:
+          type = "Desbloqueado";
+          break;
+      }
+      ss << params.step->get()->process;
+      info.push_back(hbox(
+          {text(type + ": "),
+           text(ss.str()) | color(processColor(params.step->get()->process.getPid()))}));
+    }
     return vbox({window(text("Memoria"), memoryBar(params.step, params.memorySize)),
+                 window(text("Información"), vbox(info)),
                  window(text("Cola"), processQueue(params.step))});
   });
 

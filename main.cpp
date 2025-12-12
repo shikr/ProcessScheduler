@@ -37,6 +37,9 @@ int main() {
         .step = &step,
         .scheduler = &scheduler,
         .memorySize = &memorySize,
+        .systemQuantum = &systemQuantum,
+        .processMemory = &processMemory,
+        .processQuantum = &processQuantum
       },
       [&] {
         tabSelector = 0;
