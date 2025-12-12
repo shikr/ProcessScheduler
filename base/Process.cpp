@@ -11,6 +11,8 @@
 
 int Process::currentProcess = 1;
 
+Process::Process() {}
+
 Process::Process(const int maxMemory, const int maxQuantum) {
   pid = currentProcess++;
   memory = random(1, maxMemory);

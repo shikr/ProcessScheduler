@@ -22,7 +22,7 @@ struct Step {
   std::list<Process> queue;
   std::list<MemoryBlock> memory;
 
-  Step() : process(128, 10), current(128, 10) {}
+  Step() : process(), current() {}
 };
 
 class Scheduler {

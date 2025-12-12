@@ -13,6 +13,7 @@ class Process {
   int pid;
 
  public:
+  Process();
   Process(int maxMemory, int maxQuantum);
   void execute(int);
   [[nodiscard]] int getMemory() const { return memory; }
