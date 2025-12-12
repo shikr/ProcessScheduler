@@ -5,6 +5,7 @@
 #include "base/Scheduler.h"
 #include "memory/FirstMemory.h"
 #include "ui/tabs/Home.h"
+#include "ui/tabs/Simulator.h"
 
 int main() {
   int memorySize = 1024;
@@ -15,21 +16,33 @@ int main() {
   std::unique_ptr<Scheduler> scheduler;
   std::shared_ptr<BaseMemory> memory = std::make_shared<FirstMemory>(memorySize);
   ftxui::ScreenInteractive screen = ftxui::ScreenInteractive::FullscreenAlternateScreen();
+  std::unique_ptr<Step> step = nullptr;
 
   // clang-format off
-  auto component = ftxui::Container::Tab({
-    Home({
-      .memory = &memory,
-      .memorySize = &memorySize,
-      .processMemory = &processMemory,
-      .processQuantum = &processQuantum,
-      .systemQuantum = &systemQuantum
+  auto component = ftxui::Container::Tab(
+    {
+      Home({
+        .memory = &memory,
+        .memorySize = &memorySize,
+        .processMemory = &processMemory,
+        .processQuantum = &processQuantum,
+        .systemQuantum = &systemQuantum
+      },
+      [&] {
+        scheduler = std::make_unique<Scheduler>(processMemory, processQuantum, memory, systemQuantum);
+        tabSelector = 1;
+      },
+      screen.ExitLoopClosure()),
+      Simulator({
+        .step = &step,
+        .scheduler = &scheduler,
+      },
+      [&] {
+        tabSelector = 0;
+      }),
     },
-    [&] {
-      scheduler = std::make_unique<Scheduler>(processMemory, processQuantum, memory, systemQuantum);
-    },
-    screen.ExitLoopClosure()
-  )}, &tabSelector);
+    &tabSelector
+  );
   // clang-format on
 
   screen.Loop(component);

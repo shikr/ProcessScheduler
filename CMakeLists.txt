@@ -27,6 +27,8 @@ add_executable(ProcessScheduler main.cpp
         memory/WorstMemory.h
         ui/tabs/Home.cpp
         ui/tabs/Home.h
+        ui/tabs/Simulator.cpp
+        ui/tabs/Simulator.h
         ui/components/NumberInput.cpp
         ui/components/NumberInput.h
 )
