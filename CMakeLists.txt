@@ -33,8 +33,10 @@ add_executable(ProcessScheduler main.cpp
         ui/components/NumberInput.h
         ui/components/Scrollable.cpp
         ui/components/Scrollable.h
-        ui/components/MemoryBar.cpp
-        ui/components/MemoryBar.h
+        ui/elements/memoryBar.cpp
+        ui/elements/memoryBar.h
+        ui/elements/processQueue.cpp
+        ui/elements/processQueue.h
 )
 
 target_link_libraries(ProcessScheduler PRIVATE

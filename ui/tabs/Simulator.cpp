@@ -9,8 +9,9 @@
 #include <vector>
 
 #include "../../base/Scheduler.h"
-#include "../components/MemoryBar.h"
 #include "../components/Scrollable.h"
+#include "../elements/memoryBar.h"
+#include "../elements/processQueue.h"
 
 using namespace ftxui;
 
@@ -52,19 +53,22 @@ Component Simulator(SimulatorParams params, std::function<void()> back) {
     back();
   });
 
-  std::vector<std::string> entries = {"Ciclo", "Registros"};
+  std::vector<std::string> entries = {"Estado", "Registros"};
 
   auto view_menu = Menu(entries, &view, {.on_enter = [=] { button->TakeFocus(); }});
+  auto status_component = Renderer([=] {
+    return vbox({window(text("Memoria"), memoryBar(params.step, params.memorySize)),
+                 window(text("Cola"), processQueue(params.step))});
+  });
 
   auto status = Container::Tab(
-      {MemoryBar([](Elements blocks) { return hflow(blocks); }, params.step,
-                 params.memorySize),
-       Scrollable(
-           [](bool focused) {
-             return vbox(logs(log)) | hscroll_indicator | vscroll_indicator |
-                    color(focused ? Color::Yellow : Color::White);
-           },
-           {.scroll_y = &scroll_y})},
+      {status_component, Scrollable(
+                             [](bool focused) {
+                               return vbox(logs(log)) | hscroll_indicator |
+                                      vscroll_indicator |
+                                      color(focused ? Color::Yellow : Color::White);
+                             },
+                             {.scroll_y = &scroll_y})},
       &view);
 
   auto controls = Container::Horizontal({view_menu, button, stop_button});
