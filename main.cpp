@@ -2,6 +2,7 @@
 #include <ftxui/component/screen_interactive.hpp>
 #include <memory>
 
+#include "base/Process.h"
 #include "base/Scheduler.h"
 #include "memory/FirstMemory.h"
 #include "ui/tabs/Home.h"
@@ -42,6 +43,8 @@ int main() {
         .processQuantum = &processQuantum
       },
       [&] {
+        Process::Reset();
+        step.reset();
         tabSelector = 0;
       }),
     },

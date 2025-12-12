@@ -21,6 +21,8 @@ class Process {
   [[nodiscard]] int getQuantum() const { return quantum; }
   [[nodiscard]] bool isAlive() const;
 
+  static void Reset() { currentProcess = 1; }
+
   friend std::ostream& operator<<(std::ostream&, const Process&);
 };
 
