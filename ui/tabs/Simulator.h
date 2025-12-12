@@ -3,16 +3,19 @@
 #include <ftxui/component/component_base.hpp>
 #include <functional>
 #include <memory>
+#include <string>
+#include <vector>
 
 #include "../../base/Scheduler.h"
 
 struct SimulatorParams {
   std::unique_ptr<Step>* step;
-  std::unique_ptr<Scheduler>* scheduler;
+  std::vector<std::string>* log;
   int* memorySize;
   int* systemQuantum;
   int* processMemory;
   int* processQuantum;
+  std::function<void()> schedule;
 };
 
 ftxui::Component Simulator(SimulatorParams, std::function<void()> playpause,

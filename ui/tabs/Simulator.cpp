@@ -32,24 +32,15 @@ static std::vector<Element> logs(std::vector<std::string> log) {
 
 Component Simulator(SimulatorParams params, std::function<void()> playpause,
                     std::function<void()> back) {
-  static std::vector<std::string> log;
   static int view = 0;
   static float scroll_y = 1.f;
 
   auto button = Button("Siguiente", [=] {
-    auto step = params.scheduler->get()->schedule();
-    *params.step = std::make_unique<Step>(step);
-    std::ostringstream ss;
-
-    ss << step;
-
-    log.push_back(ss.str());
+    params.schedule();
     scroll_y = 1.f;
   });
 
   auto stop_button = Button("Inicio", [=] {
-    log.clear();
-    params.scheduler->get()->clear();
     scroll_y = 1.f;
     view = 0;
     back();
@@ -91,8 +82,8 @@ Component Simulator(SimulatorParams params, std::function<void()> playpause,
 
   auto status = Container::Tab(
       {status_component, Scrollable(
-                             [](bool focused) {
-                               return vbox(logs(log)) | hscroll_indicator |
+                             [=](bool focused) {
+                               return vbox(logs(*params.log)) | hscroll_indicator |
                                       vscroll_indicator |
                                       color(focused ? Color::Yellow : Color::White);
                              },

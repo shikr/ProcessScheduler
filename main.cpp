@@ -2,6 +2,8 @@
 #include <ftxui/component/component.hpp>
 #include <ftxui/component/screen_interactive.hpp>
 #include <memory>
+#include <string>
+#include <vector>
 
 #include "base/Process.h"
 #include "base/Scheduler.h"
@@ -21,13 +23,23 @@ int main() {
   ftxui::ScreenInteractive screen = ftxui::ScreenInteractive::FullscreenAlternateScreen();
   std::unique_ptr<Step> step = nullptr;
   auto delay = std::chrono::milliseconds(1000);
+  std::vector<std::string> logs;
+
+  auto schedule = [&] {
+    if (step)
+      *step = scheduler->schedule();
+    else
+      step = std::make_unique<Step>(scheduler->schedule());
+
+    std::ostringstream ss;
+    ss << *step;
+
+    logs.push_back(ss.str());
+  };
 
   Timer timer(
       [&] {
-        if (step)
-          *step = scheduler->schedule();
-        else
-          step = std::make_unique<Step>(scheduler->schedule());
+        schedule();
         screen.RequestAnimationFrame();
       },
       &delay);
@@ -50,11 +62,12 @@ int main() {
       screen.ExitLoopClosure()),
       Simulator({
         .step = &step,
-        .scheduler = &scheduler,
+        .log = &logs,
         .memorySize = &memorySize,
         .systemQuantum = &systemQuantum,
         .processMemory = &processMemory,
-        .processQuantum = &processQuantum
+        .processQuantum = &processQuantum,
+        .schedule = schedule,
       },
       [&] {
         if (timer.isRunning()) timer.stop();
@@ -62,7 +75,9 @@ int main() {
       },
       [&] {
         timer.stop();
+        logs.clear();
         Process::Reset();
+        scheduler->clear();
         step.reset();
         tabSelector = 0;
       }),
