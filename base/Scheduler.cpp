@@ -43,6 +43,9 @@ Step Scheduler::schedule() {
   }
   Process curr = processes.front();
   step.current = curr;
+  // guarda el estado antes de que se ejecute el proceso
+  step.queue = normalize();
+  step.memory = memoryManager->normalize();
   // ejecuta el proceso actual (le resta los quantum)
   curr.execute(systemQuantum);
   // elimina el proceso de la cola
@@ -56,8 +59,6 @@ Step Scheduler::schedule() {
     // al terminar el proceso, lo elimina de la memoria
     memoryManager->deallocate(curr);
   }
-  step.queue = normalize();
-  step.memory = memoryManager->normalize();
 
   return step;
 }
@@ -100,7 +101,6 @@ std::ostream& operator<<(std::ostream& os, const Step& step) {
       break;
   }
   os << step.process << std::endl;
-  os << "Ejecutado: " << step.current << std::endl;
   if (!step.queue.empty()) {
     os << "Cola: ";
     for (const auto& process : step.queue) {
@@ -112,6 +112,8 @@ std::ostream& operator<<(std::ostream& os, const Step& step) {
   for (const auto& block : step.memory) {
     os << block << " ";
   }
+  os << std::endl;
+  os << "Ejecutando: " << step.current;
 
   return os;
 }
