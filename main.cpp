@@ -36,6 +36,7 @@ int main() {
       Simulator({
         .step = &step,
         .scheduler = &scheduler,
+        .memorySize = &memorySize,
       },
       [&] {
         tabSelector = 0;

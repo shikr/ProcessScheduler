@@ -9,6 +9,7 @@
 struct SimulatorParams {
   std::unique_ptr<Step>* step;
   std::unique_ptr<Scheduler>* scheduler;
+  int* memorySize;
 };
 
 ftxui::Component Simulator(SimulatorParams, std::function<void()>);
