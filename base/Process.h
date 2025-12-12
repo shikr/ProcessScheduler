@@ -18,6 +18,7 @@ class Process {
   void execute(int);
   [[nodiscard]] int getMemory() const { return memory; }
   [[nodiscard]] int getPid() const { return pid; }
+  [[nodiscard]] int getQuantum() const { return quantum; }
   [[nodiscard]] bool isAlive() const;
 
   friend std::ostream& operator<<(std::ostream&, const Process&);
