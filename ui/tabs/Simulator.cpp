@@ -56,7 +56,8 @@ Component Simulator(SimulatorParams params, std::function<bool()> playpause,
   });
 
   std::vector<std::string> entries = {"Estado", "Registros"};
-  auto view_menu = Menu(entries, &view, {.on_enter = [=] { next_button->TakeFocus(); }});
+  auto view_menu =
+      Menu(entries, &view, {.on_enter = [=] { playpause_button->TakeFocus(); }});
 
   auto controls =
       Container::Horizontal({view_menu, playpause_button, next_button, stop_button});
