@@ -2,11 +2,13 @@
 #include <ftxui/component/component.hpp>
 #include <ftxui/component/screen_interactive.hpp>
 #include <memory>
+#include <numeric>
 #include <string>
 #include <vector>
 
 #include "base/Process.h"
 #include "base/Scheduler.h"
+#include "memory/BaseMemory.h"
 #include "memory/FirstMemory.h"
 #include "ui/tabs/Home.h"
 #include "ui/tabs/Simulator.h"
@@ -24,6 +26,7 @@ int main() {
   std::unique_ptr<Step> step = nullptr;
   auto delay = std::chrono::milliseconds(1000);
   std::vector<std::string> logs;
+  std::vector<int> memoryHistory;
 
   auto schedule = [&] {
     if (step)
@@ -35,6 +38,9 @@ int main() {
     ss << *step;
 
     logs.push_back(ss.str());
+    memoryHistory.push_back(std::accumulate(
+        step->queue.begin(), step->queue.end(), 0,
+        [](int acc, const Process& procc) { return acc + procc.getMemory(); }));
   };
 
   Timer timer(
@@ -67,6 +73,7 @@ int main() {
         .systemQuantum = &systemQuantum,
         .processMemory = &processMemory,
         .processQuantum = &processQuantum,
+        .memoryHistory = &memoryHistory,
         .delay = &delay,
         .schedule = schedule,
       },
@@ -79,6 +86,7 @@ int main() {
       [&] {
         timer.stop();
         logs.clear();
+        memoryHistory.clear();
         Process::Reset();
         scheduler->clear();
         step.reset();

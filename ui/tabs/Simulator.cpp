@@ -1,10 +1,13 @@
 #include "Simulator.h"
 
+#include <algorithm>
 #include <chrono>
+#include <cmath>
 #include <ftxui/component/component.hpp>
 #include <ftxui/component/component_base.hpp>
 #include <ftxui/dom/elements.hpp>
 #include <functional>
+#include <ranges>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -29,6 +32,27 @@ static std::vector<Element> logs(std::vector<std::string> log) {
   }
 
   return elements;
+}
+
+static std::function<std::vector<int>(int, int)> historyGraph(
+    std::vector<int>* memoryHistory, int* memorySize) {
+  return [=](int width, int height) {
+    std::vector<int> output(width, 0);
+    auto value = (float)height / (float)*memorySize;
+    auto chunk = std::ceil((float)width / (float)memoryHistory->size());
+    auto start = std::max(0, (int)memoryHistory->size() - width);
+
+    if (chunk > (float)width / 3) chunk = (float)width / 3;
+
+    int n = 0;
+
+    for (const auto& size :
+         *memoryHistory | std::views::drop(start) | std::views::take(width)) {
+      for (int i = 0; i < chunk && n < width; ++i, n++) output[n] = size * value;
+    }
+
+    return output;
+  };
 }
 
 Component Simulator(SimulatorParams params, std::function<bool()> playpause,
@@ -101,7 +125,10 @@ Component Simulator(SimulatorParams params, std::function<bool()> playpause,
           {text(type + ": "),
            text(ss.str()) | color(processColor(params.step->get()->process.getPid()))}));
     }
-    return vbox({window(text("Memoria"), memoryBar(params.step, params.memorySize)),
+    return vbox({window(text("Gráfico de memoria utilizada"),
+                        graph(historyGraph(params.memoryHistory, params.memorySize)) |
+                            color(Color::Green)),
+                 window(text("Memoria"), memoryBar(params.step, params.memorySize)),
                  window(text("Información"), vbox(info)),
                  window(text("Cola"), processQueue(params.step))});
   });

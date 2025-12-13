@@ -16,6 +16,7 @@ struct SimulatorParams {
   int* systemQuantum;
   int* processMemory;
   int* processQuantum;
+  std::vector<int>* memoryHistory;
   std::chrono::milliseconds* delay;
   std::function<void()> schedule;
 };
