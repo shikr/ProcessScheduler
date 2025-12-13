@@ -40,15 +40,18 @@ static std::function<std::vector<int>(int, int)> historyGraph(
     std::vector<int> output(width, 0);
     auto value = (float)height / (float)*memorySize;
     auto chunk = std::ceil((float)width / (float)memoryHistory->size());
-    auto start = std::max(0, (int)memoryHistory->size() - width);
 
     if (chunk > (float)width / 3) chunk = (float)width / 3;
+
+    auto total_chunks = width / chunk;
+    auto start = std::max(0, (int)memoryHistory->size() - (int)total_chunks - 1);
 
     int n = 0;
 
     for (const auto& size :
-         *memoryHistory | std::views::drop(start) | std::views::take(width)) {
-      for (int i = 0; i < chunk && n < width; ++i, n++) output[n] = size * value;
+         *memoryHistory | std::views::drop(start) | std::views::take(total_chunks + 1)) {
+      for (int i = 0; i < chunk; ++i, n++)
+        if (n < width) output[n] = size * value;
     }
 
     return output;
