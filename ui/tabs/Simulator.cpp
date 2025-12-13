@@ -1,5 +1,6 @@
 #include "Simulator.h"
 
+#include <chrono>
 #include <ftxui/component/component.hpp>
 #include <ftxui/component/component_base.hpp>
 #include <ftxui/dom/elements.hpp>
@@ -34,6 +35,7 @@ Component Simulator(SimulatorParams params, std::function<bool()> playpause,
                     std::function<void()> back) {
   static int view = 0;
   static float scroll_y = 1.f;
+  static int speed = 2;
   static std::string controlLabel = "Pausar";
 
   auto playpause_button = Button(&controlLabel, [=] {
@@ -52,15 +54,26 @@ Component Simulator(SimulatorParams params, std::function<bool()> playpause,
     scroll_y = 1.f;
     view = 0;
     controlLabel = "Pausar";
+    speed = 2;
     back();
   });
+
+  std::vector<std::string> speeds = {"0.25x", "0.5x", "1x", "1.5x", "2x"};
+
+  auto speed_menu =
+      Dropdown({.radiobox = {.entries = speeds, .selected = &speed, .on_change = [=] {
+                               float selected = 0.25;
+                               if (speed > 0) selected = 0.5 * speed;
+                               *params.delay = std::chrono::milliseconds(
+                                   static_cast<int>(1000 / selected));
+                             }}});
 
   std::vector<std::string> entries = {"Estado", "Registros"};
   auto view_menu =
       Menu(entries, &view, {.on_enter = [=] { playpause_button->TakeFocus(); }});
 
-  auto controls =
-      Container::Horizontal({view_menu, playpause_button, next_button, stop_button});
+  auto controls = Container::Horizontal(
+      {view_menu, playpause_button, next_button, stop_button, speed_menu});
 
   auto status_component = Renderer([=] {
     Elements info = {
@@ -106,10 +119,14 @@ Component Simulator(SimulatorParams params, std::function<bool()> playpause,
   auto container = Container::Vertical({status, controls});
 
   return Renderer(container, [=] {
-    return vbox({window(text(entries[view]), status->Render()) | flex,
-                 window(text("Controles"),
-                        hbox({vbox({text("Vista"), view_menu->Render()}), filler(),
-                              playpause_button->Render(), next_button->Render(),
-                              stop_button->Render(), filler()}))});
+    return vbox(
+        {window(text(entries[view]), status->Render()) | flex,
+         window(text("Controles"),
+                hbox({vbox({text("Vista"), view_menu->Render()}), filler(),
+                      vbox({filler(),
+                            hbox({playpause_button->Render(), next_button->Render(),
+                                  stop_button->Render()}),
+                            filler()}),
+                      filler(), vbox({text("Velocidad"), speed_menu->Render()})}))});
   });
 }

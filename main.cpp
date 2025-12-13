@@ -67,6 +67,7 @@ int main() {
         .systemQuantum = &systemQuantum,
         .processMemory = &processMemory,
         .processQuantum = &processQuantum,
+        .delay = &delay,
         .schedule = schedule,
       },
       [&] {

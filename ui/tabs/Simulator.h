@@ -1,5 +1,6 @@
 #ifndef PROCESSSCHEDULER_SIMULATOR_H
 #define PROCESSSCHEDULER_SIMULATOR_H
+#include <chrono>
 #include <ftxui/component/component_base.hpp>
 #include <functional>
 #include <memory>
@@ -15,6 +16,7 @@ struct SimulatorParams {
   int* systemQuantum;
   int* processMemory;
   int* processQuantum;
+  std::chrono::milliseconds* delay;
   std::function<void()> schedule;
 };
 
