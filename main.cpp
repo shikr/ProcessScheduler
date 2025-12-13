@@ -72,6 +72,8 @@ int main() {
       [&] {
         if (timer.isRunning()) timer.stop();
         else timer.start();
+
+        return timer.isRunning();
       },
       [&] {
         timer.stop();

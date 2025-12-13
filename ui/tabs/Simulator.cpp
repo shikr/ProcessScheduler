@@ -30,12 +30,20 @@ static std::vector<Element> logs(std::vector<std::string> log) {
   return elements;
 }
 
-Component Simulator(SimulatorParams params, std::function<void()> playpause,
+Component Simulator(SimulatorParams params, std::function<bool()> playpause,
                     std::function<void()> back) {
   static int view = 0;
   static float scroll_y = 1.f;
+  static std::string controlLabel = "Pausar";
 
-  auto button = Button("Siguiente", [=] {
+  auto playpause_button = Button(&controlLabel, [=] {
+    if (playpause())
+      controlLabel = "Pausar";
+    else
+      controlLabel = "Reanudar";
+  });
+
+  auto next_button = Button("Siguiente", [=] {
     params.schedule();
     scroll_y = 1.f;
   });
@@ -43,12 +51,16 @@ Component Simulator(SimulatorParams params, std::function<void()> playpause,
   auto stop_button = Button("Inicio", [=] {
     scroll_y = 1.f;
     view = 0;
+    controlLabel = "Pausar";
     back();
   });
 
   std::vector<std::string> entries = {"Estado", "Registros"};
+  auto view_menu = Menu(entries, &view, {.on_enter = [=] { next_button->TakeFocus(); }});
 
-  auto view_menu = Menu(entries, &view, {.on_enter = [=] { button->TakeFocus(); }});
+  auto controls =
+      Container::Horizontal({view_menu, playpause_button, next_button, stop_button});
+
   auto status_component = Renderer([=] {
     Elements info = {
         text("Tamaño de la memoria: " + std::to_string(*params.memorySize)),
@@ -90,13 +102,13 @@ Component Simulator(SimulatorParams params, std::function<void()> playpause,
                              {.scroll_y = &scroll_y})},
       &view);
 
-  auto controls = Container::Horizontal({view_menu, button, stop_button});
   auto container = Container::Vertical({status, controls});
 
   return Renderer(container, [=] {
     return vbox({window(text(entries[view]), status->Render()) | flex,
                  window(text("Controles"),
                         hbox({vbox({text("Vista"), view_menu->Render()}), filler(),
-                              button->Render(), stop_button->Render(), filler()}))});
+                              playpause_button->Render(), next_button->Render(),
+                              stop_button->Render(), filler()}))});
   });
 }

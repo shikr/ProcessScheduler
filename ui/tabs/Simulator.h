@@ -18,6 +18,6 @@ struct SimulatorParams {
   std::function<void()> schedule;
 };
 
-ftxui::Component Simulator(SimulatorParams, std::function<void()> playpause,
+ftxui::Component Simulator(SimulatorParams, std::function<bool()> playpause,
                            std::function<void()> back);
 #endif  // !PROCESSSCHEDULER_SIMULATOR_H
