@@ -15,9 +15,9 @@ void Timer::start() {
       do {
         waiting++;
         auto end = std::chrono::system_clock::now() + *delay;
-        fn();
         // usar sleep_for generaría tiempos puertos
         while (std::chrono::system_clock::now() < end && running);
+        fn();
         waiting--;
       } while (running);
     }).detach();
