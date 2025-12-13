@@ -24,9 +24,11 @@ void Timer::start() {
   } else if (waiting == 1) {
     // espera a que termine de ejecutarse el hilo principal para iniciar uno nuevo
     std::thread([&] {
-      waiting++;
+      // al sumar 2 previene que entre en este condicional cuando el hilo principal
+      // termine pero este no
+      waiting += 2;
       while (waiting > 1);
-      waiting--;
+      waiting -= 2;
       start();
     }).detach();
   }
